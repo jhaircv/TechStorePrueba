@@ -275,19 +275,35 @@ function scrollToLogo() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ...código existente...
+
+// Chatbot flotante mejorado
 document.addEventListener('DOMContentLoaded', function() {
   const chatbotHeader = document.getElementById('chatbot-header');
   const chatbotBody = document.getElementById('chatbot-body');
   const chatbotForm = document.getElementById('chatbot-form');
   const chatbotInput = document.getElementById('chatbot-input');
 
+  // Historial en memoria (puedes usar localStorage si quieres persistencia)
+  let chatHistory = [];
+
   // Mostrar/ocultar chat
   chatbotHeader.onclick = () => {
     const visible = chatbotBody.style.display === 'block';
     chatbotBody.style.display = visible ? 'none' : 'block';
     chatbotForm.style.display = visible ? 'none' : 'flex';
-    if (!visible) chatbotInput.focus();
+    if (!visible) {
+      renderChatHistory();
+      chatbotInput.focus();
+    }
   };
+
+  function renderChatHistory() {
+    chatbotBody.innerHTML = chatHistory.map(msg =>
+      `<div style="text-align:${msg.from === 'user' ? 'right' : 'left'};color:${msg.from === 'bot' ? '#007bff' : '#222'};"><b>${msg.from === 'user' ? 'Tú' : 'Bot'}:</b> ${msg.text}</div>`
+    ).join('');
+    chatbotBody.scrollTop = chatbotBody.scrollHeight;
+  }
 
   // Respuestas simples por palabras clave
   function chatbotResponder(msg) {
@@ -310,6 +326,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (msg.includes('gracias')) {
       return '¡De nada! Si tienes otra pregunta, aquí estoy.';
     }
+    if (msg.includes('precio') || msg.includes('cuánto cuesta')) {
+      return 'Para ver precios, revisa la sección de productos o dime qué modelo te interesa.';
+    }
     return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
   }
 
@@ -318,13 +337,13 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
     const userMsg = chatbotInput.value.trim();
     if (!userMsg) return;
-    chatbotBody.innerHTML += `<div style="text-align:right;"><b>Tú:</b> ${userMsg}</div>`;
+    chatHistory.push({ from: 'user', text: userMsg });
+    renderChatHistory();
     const botMsg = chatbotResponder(userMsg);
     setTimeout(() => {
-      chatbotBody.innerHTML += `<div style="text-align:left;color:#007bff;"><b>Bot:</b> ${botMsg}</div>`;
-      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      chatHistory.push({ from: 'bot', text: botMsg });
+      renderChatHistory();
     }, 400);
     chatbotInput.value = '';
-    chatbotBody.scrollTop = chatbotBody.scrollHeight;
   };
 });
