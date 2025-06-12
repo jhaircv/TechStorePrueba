@@ -278,16 +278,17 @@ function scrollToLogo() {
 // ...código existente...
 
 // Chatbot flotante mejorado
+// ...código existente...
+
 document.addEventListener('DOMContentLoaded', function() {
   const chatbotHeader = document.getElementById('chatbot-header');
   const chatbotBody = document.getElementById('chatbot-body');
   const chatbotForm = document.getElementById('chatbot-form');
   const chatbotInput = document.getElementById('chatbot-input');
 
-  // Historial en memoria (puedes usar localStorage si quieres persistencia)
   let chatHistory = [];
+  let lastTopic = null; // Guarda el contexto de la última pregunta
 
-  // Mostrar/ocultar chat
   chatbotHeader.onclick = () => {
     const visible = chatbotBody.style.display === 'block';
     chatbotBody.style.display = visible ? 'none' : 'block';
@@ -305,18 +306,64 @@ document.addEventListener('DOMContentLoaded', function() {
     chatbotBody.scrollTop = chatbotBody.scrollHeight;
   }
 
-  // Respuestas simples por palabras clave
   function chatbotResponder(msg) {
     msg = msg.toLowerCase();
+
+    // Respuestas contextuales para monitores
+    if (lastTopic === 'monitor') {
+      if (msg.includes('gaming')) {
+        lastTopic = null;
+        return 'Para gaming te recomiendo el Monitor Acer Nitro o el Samsung Curvo, ambos con alta tasa de refresco.';
+      }
+      if (msg.includes('trabajo') || msg.includes('oficina') || msg.includes('normal')) {
+        lastTopic = null;
+        return 'Para uso de oficina o normal, el Monitor LG 24” o el HP 27” son excelentes opciones.';
+      }
+      // Si no reconoce, pide aclaración
+      return '¿Buscas un monitor para gaming o para uso de oficina?';
+    }
+
+    // Pregunta inicial sobre monitores
+    if (msg.includes('monitor')) {
+      lastTopic = 'monitor';
+      return '¿Buscas un monitor para gaming o para uso de oficina?';
+    }
+
+    // Puedes agregar más contextos para celulares, audífonos, etc.
+    if (lastTopic === 'celular') {
+      if (msg.includes('gama alta')) {
+        lastTopic = null;
+        return 'Para gama alta, el iPhone 14 Pro o el Samsung Galaxy S24 son ideales.';
+      }
+      if (msg.includes('económico') || msg.includes('barato')) {
+        lastTopic = null;
+        return 'Para algo económico, el Xiaomi Redmi Note 12 es una excelente opción.';
+      }
+      return '¿Prefieres un celular de gama alta o económico?';
+    }
     if (msg.includes('celular') || msg.includes('smartphone')) {
-      return 'Te recomiendo el Samsung Galaxy S24 o el iPhone 14 Pro. ¿Buscas algo económico o de gama alta?';
+      lastTopic = 'celular';
+      return '¿Prefieres un celular de gama alta o económico?';
+    }
+
+    // Audífonos ejemplo
+    if (lastTopic === 'audifono') {
+      if (msg.includes('inalámbrico')) {
+        lastTopic = null;
+        return 'Te recomiendo los JBL o los Sony inalámbricos.';
+      }
+      if (msg.includes('cable')) {
+        lastTopic = null;
+        return 'Los Sennheiser HD 450BT con cable son muy buenos.';
+      }
+      return '¿Prefieres audífonos inalámbricos o con cable?';
     }
     if (msg.includes('audífono') || msg.includes('auricular')) {
-      return 'Los Sony y los JBL son excelentes opciones. ¿Prefieres inalámbricos o con cable?';
+      lastTopic = 'audifono';
+      return '¿Prefieres audífonos inalámbricos o con cable?';
     }
-    if (msg.includes('monitor')) {
-      return 'El Monitor LG 24” es muy bueno para uso general. ¿Buscas para gaming o trabajo?';
-    }
+
+    // Resto de respuestas simples
     if (msg.includes('teclado')) {
       return 'El Teclado Mecánico Corsair es ideal para gamers. ¿Prefieres mecánico o de membrana?';
     }
@@ -332,7 +379,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
   }
 
-  // Manejar envío de mensajes
   chatbotForm.onsubmit = function(e) {
     e.preventDefault();
     const userMsg = chatbotInput.value.trim();
