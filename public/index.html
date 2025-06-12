@@ -96,5 +96,17 @@
     <div id="modalDescripcion"></div>
   </div>
 </div>
+
+<!-- Chatbot flotante (fuera del modal) -->
+<div id="chatbot" style="position:fixed;bottom:20px;right:20px;width:320px;max-width:90vw;z-index:9999;">
+  <div id="chatbot-header" style="background:#333;color:#fff;padding:10px;cursor:pointer;border-radius:10px 10px 0 0;">
+    🤖 ¿Necesitas ayuda? ¡Chatea aquí!
+  </div>
+  <div id="chatbot-body" style="background:#fff;border:1px solid #ccc;height:260px;overflow-y:auto;padding:10px;display:none;"></div>
+  <form id="chatbot-form" style="display:none; background:#fff; border:1px solid #ccc; border-top:none; padding:5px; border-radius:0 0 10px 10px; display:flex; gap:5px; align-items:center;">
+  <input id="chatbot-input" type="text" placeholder="Escribe tu pregunta..." style="flex:1; padding:5px;" autocomplete="off"/>
+  <button type="submit" style="padding:5px 16px;">Enviar</button>
+</form>
+</div>
 </body>
 </html>

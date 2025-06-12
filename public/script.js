@@ -274,3 +274,57 @@ window.addEventListener('scroll', function() {
 function scrollToLogo() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const chatbotHeader = document.getElementById('chatbot-header');
+  const chatbotBody = document.getElementById('chatbot-body');
+  const chatbotForm = document.getElementById('chatbot-form');
+  const chatbotInput = document.getElementById('chatbot-input');
+
+  // Mostrar/ocultar chat
+  chatbotHeader.onclick = () => {
+    const visible = chatbotBody.style.display === 'block';
+    chatbotBody.style.display = visible ? 'none' : 'block';
+    chatbotForm.style.display = visible ? 'none' : 'flex';
+    if (!visible) chatbotInput.focus();
+  };
+
+  // Respuestas simples por palabras clave
+  function chatbotResponder(msg) {
+    msg = msg.toLowerCase();
+    if (msg.includes('celular') || msg.includes('smartphone')) {
+      return 'Te recomiendo el Samsung Galaxy S24 o el iPhone 14 Pro. ¿Buscas algo económico o de gama alta?';
+    }
+    if (msg.includes('audífono') || msg.includes('auricular')) {
+      return 'Los Sony y los JBL son excelentes opciones. ¿Prefieres inalámbricos o con cable?';
+    }
+    if (msg.includes('monitor')) {
+      return 'El Monitor LG 24” es muy bueno para uso general. ¿Buscas para gaming o trabajo?';
+    }
+    if (msg.includes('teclado')) {
+      return 'El Teclado Mecánico Corsair es ideal para gamers. ¿Prefieres mecánico o de membrana?';
+    }
+    if (msg.includes('mouse')) {
+      return 'El Mouse Logitech G203 es muy popular entre gamers y usuarios de oficina.';
+    }
+    if (msg.includes('gracias')) {
+      return '¡De nada! Si tienes otra pregunta, aquí estoy.';
+    }
+    return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
+  }
+
+  // Manejar envío de mensajes
+  chatbotForm.onsubmit = function(e) {
+    e.preventDefault();
+    const userMsg = chatbotInput.value.trim();
+    if (!userMsg) return;
+    chatbotBody.innerHTML += `<div style="text-align:right;"><b>Tú:</b> ${userMsg}</div>`;
+    const botMsg = chatbotResponder(userMsg);
+    setTimeout(() => {
+      chatbotBody.innerHTML += `<div style="text-align:left;color:#007bff;"><b>Bot:</b> ${botMsg}</div>`;
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }, 400);
+    chatbotInput.value = '';
+    chatbotBody.scrollTop = chatbotBody.scrollHeight;
+  };
+});
