@@ -290,119 +290,71 @@ function scrollToLogo() {
 
 // ...código existente...
 
-// Chatbot flotante mejorado
-// ...código existente...
+// --- Chatbot completo ---
 
-document.addEventListener('DOMContentLoaded', function() {
-  const chatbotHeader = document.getElementById('chatbot-header');
-  const chatbotBody = document.getElementById('chatbot-body');
-  const chatbotForm = document.getElementById('chatbot-form');
-  const chatbotInput = document.getElementById('chatbot-input');
+const respuestasChatbot = [
+  { keywords: ["hola", "buenas"], respuesta: "¡Hola! ¿En qué puedo ayudarte hoy?" },
+  { keywords: ["precio", "coste", "cuánto"], respuesta: "¿Sobre qué producto quieres saber el precio?" },
+  { keywords: ["envío", "entrega"], respuesta: "Realizamos envíos a todo el país. ¿Te gustaría saber los tiempos de entrega?" },
+  { keywords: ["devolución", "garantía"], respuesta: "Todos nuestros productos tienen garantía y puedes solicitar devolución en 15 días." },
+  { keywords: ["contacto", "soporte"], respuesta: "Puedes contactarnos al correo soporte@techstore.com o por este chat." },
+  { keywords: ["gracias", "thank"], respuesta: "¡De nada! Si tienes otra pregunta, aquí estoy." }
+];
 
-  let chatHistory = [];
-  let lastTopic = null; // Guarda el contexto de la última pregunta
-
-  chatbotHeader.onclick = () => {
-    const visible = chatbotBody.style.display === 'block';
-    chatbotBody.style.display = visible ? 'none' : 'block';
-    chatbotForm.style.display = visible ? 'none' : 'flex';
-    if (!visible) {
-      renderChatHistory();
-      chatbotInput.focus();
+function responderChatbot(mensaje) {
+  mensaje = mensaje.toLowerCase();
+  for (const item of respuestasChatbot) {
+    if (item.keywords.some(k => mensaje.includes(k))) {
+      return item.respuesta;
     }
-  };
+  }
+  return "No entendí tu pregunta, ¿puedes reformularla o ser más específico?";
+}
 
-  function renderChatHistory() {
-    chatbotBody.innerHTML = chatHistory.map(msg =>
-      `<div style="text-align:${msg.from === 'user' ? 'right' : 'left'};color:${msg.from === 'bot' ? '#007bff' : '#222'};"><b>${msg.from === 'user' ? 'Tú' : 'Bot'}:</b> ${msg.text}</div>`
-    ).join('');
+const chatbotHeader = document.getElementById('chatbot-header');
+const chatbotBody = document.getElementById('chatbot-body');
+const chatbotForm = document.getElementById('chatbot-form');
+
+chatbotHeader.onclick = function() {
+  const visible = chatbotBody.style.display === 'block';
+  chatbotBody.style.display = visible ? 'none' : 'block';
+  chatbotForm.style.display = visible ? 'none' : 'flex';
+  if (!visible) {
     chatbotBody.scrollTop = chatbotBody.scrollHeight;
   }
+};
 
-  function chatbotResponder(msg) {
-    msg = msg.toLowerCase();
+chatbotForm.onsubmit = function(e) {
+  e.preventDefault();
+  const input = document.getElementById('chatbot-input');
+  const mensaje = input.value.trim();
+  if (!mensaje) return;
+  agregarMensajeUsuario(mensaje);
+  const respuesta = responderChatbot(mensaje);
+  setTimeout(() => {
+    agregarMensajeBot(respuesta);
+  }, 400);
+  input.value = '';
+};
 
-    // Respuestas contextuales para monitores
-    if (lastTopic === 'monitor') {
-      if (msg.includes('gaming')) {
-        lastTopic = null;
-        return 'Para gaming te recomiendo el Monitor Acer Nitro o el Samsung Curvo, ambos con alta tasa de refresco.';
-      }
-      if (msg.includes('trabajo') || msg.includes('oficina') || msg.includes('normal')) {
-        lastTopic = null;
-        return 'Para uso de oficina o normal, el Monitor LG 24” o el HP 27” son excelentes opciones.';
-      }
-      // Si no reconoce, pide aclaración
-      return '¿Buscas un monitor para gaming o para uso de oficina?';
-    }
+function agregarMensajeUsuario(mensaje) {
+  chatbotBody.innerHTML += `<div style="text-align:right;margin:5px 0;"><span style="background:#e0e0e0;padding:6px 12px;border-radius:12px;display:inline-block;">${mensaje}</span></div>`;
+  chatbotBody.scrollTop = chatbotBody.scrollHeight;
+}
 
-    // Pregunta inicial sobre monitores
-    if (msg.includes('monitor')) {
-      lastTopic = 'monitor';
-      return '¿Buscas un monitor para gaming o para uso de oficina?';
-    }
+function agregarMensajeBot(respuesta) {
+  chatbotBody.innerHTML += `<div style="text-align:left;margin:5px 0;"><span style="background:#007bff;color:#fff;padding:6px 12px;border-radius:12px;display:inline-block;">${respuesta}</span></div>`;
+  chatbotBody.scrollTop = chatbotBody.scrollHeight;
+}
 
-    // Puedes agregar más contextos para celulares, audífonos, etc.
-    if (lastTopic === 'celular') {
-      if (msg.includes('gama alta')) {
-        lastTopic = null;
-        return 'Para gama alta, el iPhone 14 Pro o el Samsung Galaxy S24 son ideales.';
-      }
-      if (msg.includes('económico') || msg.includes('barato')) {
-        lastTopic = null;
-        return 'Para algo económico, el Xiaomi Redmi Note 12 es una excelente opción.';
-      }
-      return '¿Prefieres un celular de gama alta o económico?';
-    }
-    if (msg.includes('celular') || msg.includes('smartphone')) {
-      lastTopic = 'celular';
-      return '¿Prefieres un celular de gama alta o económico?';
-    }
-
-    // Audífonos ejemplo
-    if (lastTopic === 'audifono') {
-      if (msg.includes('inalámbrico')) {
-        lastTopic = null;
-        return 'Te recomiendo los JBL o los Sony inalámbricos.';
-      }
-      if (msg.includes('cable')) {
-        lastTopic = null;
-        return 'Los Sennheiser HD 450BT con cable son muy buenos.';
-      }
-      return '¿Prefieres audífonos inalámbricos o con cable?';
-    }
-    if (msg.includes('audífono') || msg.includes('auricular')) {
-      lastTopic = 'audifono';
-      return '¿Prefieres audífonos inalámbricos o con cable?';
-    }
-
-    // Resto de respuestas simples
-    if (msg.includes('teclado')) {
-      return 'El Teclado Mecánico Corsair es ideal para gamers. ¿Prefieres mecánico o de membrana?';
-    }
-    if (msg.includes('mouse')) {
-      return 'El Mouse Logitech G203 es muy popular entre gamers y usuarios de oficina.';
-    }
-    if (msg.includes('gracias')) {
-      return '¡De nada! Si tienes otra pregunta, aquí estoy.';
-    }
-    if (msg.includes('precio') || msg.includes('cuánto cuesta')) {
-      return 'Para ver precios, revisa la sección de productos o dime qué modelo te interesa.';
-    }
-    return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
-  }
-
-  chatbotForm.onsubmit = function(e) {
-    e.preventDefault();
-    const userMsg = chatbotInput.value.trim();
-    if (!userMsg) return;
-    chatHistory.push({ from: 'user', text: userMsg });
-    renderChatHistory();
-    const botMsg = chatbotResponder(userMsg);
+let chatbotBienvenidaMostrada = false;
+chatbotHeader.addEventListener('click', function() {
+  if (!chatbotBienvenidaMostrada && chatbotBody.style.display === 'block') {
     setTimeout(() => {
-      chatHistory.push({ from: 'bot', text: botMsg });
-      renderChatHistory();
-    }, 400);
-    chatbotInput.value = '';
-  };
+      agregarMensajeBot("¡Hola! Soy el asistente virtual de TechStore+. ¿En qué puedo ayudarte?");
+    }, 300);
+    chatbotBienvenidaMostrada = true;
+  }
 });
+
+// --- Fin chatbot completo ---
