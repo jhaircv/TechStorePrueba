@@ -239,21 +239,34 @@ function searchProduct() {
 }
 
 // Filtrar por categoría desde la barra lateral
+// ...existing code...
 function filtrarPorCategoria(cat) {
+  // Quitar clase activa de todos los botones
+  document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
+  // Agregar clase activa al botón correspondiente
+  if (cat) {
+    const btn = Array.from(document.querySelectorAll('.sidebar button')).find(b => b.textContent.toLowerCase().includes(cat.toLowerCase()));
+    if (btn) btn.classList.add('active');
+  } else {
+    // Si es "Todos"
+    const btn = Array.from(document.querySelectorAll('.sidebar button')).find(b => b.textContent.toLowerCase().includes('todos'));
+    if (btn) btn.classList.add('active');
+  }
+
   if (!cat) {
     renderizarProductos(productos);
   } else {
     const filtrados = productos.filter(p => p.categoria === cat);
     renderizarProductos(filtrados);
   }
-// Hacer scroll suave a la primera imagen de producto
   setTimeout(() => {
     const primeraImg = document.querySelector('.product-img');
     if (primeraImg) {
       primeraImg.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, 100); // Espera breve para asegurar que el DOM se actualizó
+  }, 100);
 }
+// ...existing code...
 
 // Mostrar/ocultar botón flotante solo en la sección de productos
 window.addEventListener('scroll', function() {
