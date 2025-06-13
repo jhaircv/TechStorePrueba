@@ -341,58 +341,56 @@ document.addEventListener('DOMContentLoaded', function() {
 // Carrito de compras
 let carrito = [];
 
+// Agregar producto al carrito
 function agregarAlCarrito(producto) {
-  // Buscar si ya está en el carrito
-  const idx = carrito.findIndex(p => p.id === producto.id);
-  if (idx >= 0) {
-    carrito[idx].cantidad += 1;
-  } else {
-    carrito.push({ ...producto, cantidad: 1 });
-  }
-  actualizarContadorCarrito();
+  // Obtener el carrito actual
+  const carrito = obtenerCarrito();
+
+  // Agregar el producto al carrito
+  carrito.push(producto);
+
+  // Guardar el carrito actualizado
+  guardarCarrito(carrito);
+
+  // Mostrar el carrito
+  mostrarCarrito();
 }
 
-function actualizarContadorCarrito() {
-  document.getElementById('cart-count').textContent = carrito.reduce((acc, p) => acc + p.cantidad, 0);
-}
-
+// Mostrar el carrito
 function mostrarCarrito() {
-  const modal = document.getElementById('cart-modal');
-  const itemsDiv = document.getElementById('cart-items');
-  const totalDiv = document.getElementById('cart-total');
-  itemsDiv.innerHTML = '';
-  let total = 0;
+  // Obtener el carrito actual
+  const carrito = obtenerCarrito();
 
-  if (carrito.length === 0) {
-    itemsDiv.innerHTML = '<p>El carrito está vacío.</p>';
-    totalDiv.textContent = '';
-  } else {
-    carrito.forEach(prod => {
-      total += prod.precio * prod.cantidad;
-      itemsDiv.innerHTML += `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <span>${prod.nombre} x${prod.cantidad}</span>
-          <span>$${(prod.precio * prod.cantidad).toFixed(2)}</span>
-        </div>
-      `;
-    });
-    totalDiv.textContent = 'Total: $' + total.toFixed(2);
-  }
-  modal.style.display = 'flex';
+  // Crear la lista de productos en el carrito
+  const listaProductos = document.getElementById('cart-items');
+  listaProductos.innerHTML = '';
+
+  // Agregar cada producto al carrito
+  carrito.forEach((producto, indice) => {
+    const productoHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span>${producto.nombre} x${producto.cantidad}</span>
+        <span>$${(producto.precio * producto.cantidad).toFixed(2)}</span>
+      </div>
+    `;
+    listaProductos.innerHTML += productoHTML;
+  });
+
+  // Mostrar el total del carrito
+  const total = carrito.reduce((total, producto) => total + (producto.precio * producto.cantidad), 0);
+  document.getElementById('cart-total').textContent = `Total: $${total.toFixed(2)}`;
+
+  // Mostrar el modal del carrito
+  document.getElementById('cart-modal').style.display = 'flex';
 }
 
-// Cerrar modal del carrito
-document.getElementById('close-cart').onclick = function() {
-  document.getElementById('cart-modal').style.display = 'none';
-};
-
-// Mostrar modal al hacer click en el icono
-document.getElementById('cart-icon').onclick = mostrarCarrito;
-
-// Ejemplo de cómo agregar productos al carrito (ajusta según tu lógica de productos)
-function agregarProductoDesdeCatalogo(id, nombre, precio) {
-  agregarAlCarrito({ id, nombre, precio });
-  // Puedes mostrar un mensaje o animación aquí si quieres
+// Obtener el carrito actual
+function obtenerCarrito() {
+  const carrito = localStorage.getItem('carrito');
+  return carrito ? JSON.parse(carrito) : [];
 }
 
-// Si tienes botones "Agregar al carrito" en tus productos, llama a agregarProductoDesdeCatalogo con los datos del producto
+// Guardar el carrito actualizado
+function guardarCarrito(carrito) {
+  localStorage.setItem('carrito', JSON.stringify(carrito));
+}
