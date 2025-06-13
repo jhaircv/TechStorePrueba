@@ -379,6 +379,11 @@ document.addEventListener('DOMContentLoaded', function() {
     return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
   }
 
+  chatbotForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
   chatbotForm.onsubmit = function(e) {
     e.preventDefault();
     const userMsg = chatbotInput.value.trim();
@@ -392,4 +397,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 400);
     chatbotInput.value = '';
   };
+});
+
+// Cerrar modal al hacer clic fuera del contenido
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modalProducto');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      // Si el clic es en el fondo (no en el contenido)
+      if (e.target === modal) {
+        cerrarModalProducto();
+      }
+    });
+  }
 });
