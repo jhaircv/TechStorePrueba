@@ -352,8 +352,18 @@ function agregarAlCarrito(producto) {
   // Guardar el carrito actualizado
   guardarCarrito(carrito);
 
+  // Actualizar el contador de productos en el carrito
+  actualizarContadorCarrito();
+
   // Mostrar el carrito
   mostrarCarrito();
+}
+
+// Actualizar el contador de productos en el carrito
+function actualizarContadorCarrito() {
+  const carrito = obtenerCarrito();
+  const contador = document.getElementById('cart-count');
+  contador.textContent = carrito.length;
 }
 
 // Mostrar el carrito
@@ -384,13 +394,10 @@ function mostrarCarrito() {
   document.getElementById('cart-modal').style.display = 'flex';
 }
 
-// Obtener el carrito actual
-function obtenerCarrito() {
-  const carrito = localStorage.getItem('carrito');
-  return carrito ? JSON.parse(carrito) : [];
-}
+// Abrir el carrito al dar click en el icono de carrito
+document.getElementById('cart-icon').addEventListener('click', mostrarCarrito);
 
-// Guardar el carrito actualizado
-function guardarCarrito(carrito) {
-  localStorage.setItem('carrito', JSON.stringify(carrito));
-}
+// Cerrar el carrito al dar click en el botón de cerrar
+document.getElementById('close-cart').addEventListener('click', function() {
+  document.getElementById('cart-modal').style.display = 'none';
+});
