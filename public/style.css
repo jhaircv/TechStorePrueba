@@ -509,14 +509,13 @@ h2 {
 }
 
 #chatbot {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 320px;
-    max-width: 90vw;
-    z-index: 9999;
-    font-family: 'Segoe UI', Arial, sans-serif;
-  }
+  position: fixed;
+  bottom: 120px; /* Agregar un margen de 30px para separar del botón de carrito */
+  right: 20px;
+  width: 320px;
+  max-width: 90vw;
+  z-index: 9999;
+}
   #chatbot-header {
     background: linear-gradient(90deg, #007bff 60%, #0056b3 100%);
     color: #fff;
