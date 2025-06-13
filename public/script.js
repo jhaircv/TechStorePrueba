@@ -289,153 +289,48 @@ function scrollToLogo() {
 }
 
 // ...código existente...
+// Chatbot funcional
+document.addEventListener('DOMContentLoaded', function() {
+  const chatbotHeader = document.getElementById('chatbot-header');
+  const chatbotBody = document.getElementById('chatbot-body');
+  const chatbotForm = document.getElementById('chatbot-form');
+  const chatbotInput = document.getElementById('chatbot-input');
 
-// --- Chatbot completo ---
-
-const respuestasChatbot = [
-  { keywords: ["hola", "buenas"], respuesta: "¡Hola! ¿En qué puedo ayudarte hoy?" },
-  { keywords: ["precio", "coste", "cuánto"], respuesta: "¿Sobre qué producto quieres saber el precio?" },
-  { keywords: ["envío", "entrega"], respuesta: "Realizamos envíos a todo el país. ¿Te gustaría saber los tiempos de entrega?" },
-  { keywords: ["devolución", "garantía"], respuesta: "Todos nuestros productos tienen garantía y puedes solicitar devolución en 15 días." },
-  { keywords: ["contacto", "soporte"], respuesta: "Puedes contactarnos al correo soporte@techstore.com o por este chat." },
-  { keywords: ["gracias", "thank"], respuesta: "¡De nada! Si tienes otra pregunta, aquí estoy." }
-];
-
-function responderChatbot(mensaje) {
-  mensaje = mensaje.toLowerCase();
-  for (const item of respuestasChatbot) {
-    if (item.keywords.some(k => mensaje.includes(k))) {
-      return item.respuesta;
+  // Mostrar/ocultar chatbot
+  chatbotHeader.addEventListener('click', function() {
+    if (chatbotBody.style.display === 'none') {
+      chatbotBody.style.display = 'block';
+      chatbotForm.style.display = 'flex';
+    } else {
+      chatbotBody.style.display = 'none';
+      chatbotForm.style.display = 'none';
     }
-  }
-  return "No entendí tu pregunta, ¿puedes reformularla o ser más específico?";
-}
-
-const chatbotHeader = document.getElementById('chatbot-header');
-const chatbotBody = document.getElementById('chatbot-body');
-const chatbotForm = document.getElementById('chatbot-form');
-
-chatbotHeader.onclick = function() {
-  const visible = chatbotBody.style.display === 'block';
-  chatbotBody.style.display = visible ? 'none' : 'block';
-  chatbotForm.style.display = visible ? 'none' : 'flex';
-  if (!visible) {
-    chatbotBody.scrollTop = chatbotBody.scrollHeight;
-  }
-};
-
-chatbotForm.onsubmit = function(e) {
-  e.preventDefault();
-  const input = document.getElementById('chatbot-input');
-  const mensaje = input.value.trim();
-  if (!mensaje) return;
-  agregarMensajeUsuario(mensaje);
-  const respuesta = responderChatbot(mensaje);
-  setTimeout(() => {
-    agregarMensajeBot(respuesta);
-  }, 400);
-  input.value = '';
-};
-
-function agregarMensajeUsuario(mensaje) {
-  chatbotBody.innerHTML += `<div style="text-align:right;margin:5px 0;"><span style="background:#e0e0e0;padding:6px 12px;border-radius:12px;display:inline-block;">${mensaje}</span></div>`;
-  chatbotBody.scrollTop = chatbotBody.scrollHeight;
-}
-
-function agregarMensajeBot(respuesta) {
-  chatbotBody.innerHTML += `<div style="text-align:left;margin:5px 0;"><span style="background:#007bff;color:#fff;padding:6px 12px;border-radius:12px;display:inline-block;">${respuesta}</span></div>`;
-  chatbotBody.scrollTop = chatbotBody.scrollHeight;
-}
-
-    // Puedes agregar más contextos para celulares, audífonos, etc.
-    if (lastTopic === 'celular') {
-      if (msg.includes('gama alta')) {
-        lastTopic = null;
-        return 'Para gama alta, el iPhone 14 Pro o el Samsung Galaxy S24 son ideales.';
-      }
-      if (msg.includes('económico') || msg.includes('barato')) {
-        lastTopic = null;
-        return 'Para algo económico, el Xiaomi Redmi Note 12 es una excelente opción.';
-      }
-      return '¿Prefieres un celular de gama alta o económico?';
-    }
-    if (msg.includes('celular') || msg.includes('smartphone')) {
-      lastTopic = 'celular';
-      return '¿Prefieres un celular de gama alta o económico?';
-    }
-
-    // Audífonos ejemplo
-    if (lastTopic === 'audifono') {
-      if (msg.includes('inalámbrico')) {
-        lastTopic = null;
-        return 'Te recomiendo los JBL o los Sony inalámbricos.';
-      }
-      if (msg.includes('cable')) {
-        lastTopic = null;
-        return 'Los Sennheiser HD 450BT con cable son muy buenos.';
-      }
-      return '¿Prefieres audífonos inalámbricos o con cable?';
-    }
-    if (msg.includes('audífono') || msg.includes('auricular')) {
-      lastTopic = 'audifono';
-      return '¿Prefieres audífonos inalámbricos o con cable?';
-    }
-
-    // Resto de respuestas simples
-    if (msg.includes('teclado')) {
-      return 'El Teclado Mecánico Corsair es ideal para gamers. ¿Prefieres mecánico o de membrana?';
-    }
-    if (msg.includes('mouse')) {
-      return 'El Mouse Logitech G203 es muy popular entre gamers y usuarios de oficina.';
-    }
-    if (msg.includes('gracias')) {
-      return '¡De nada! Si tienes otra pregunta, aquí estoy.';
-    }
-    if (msg.includes('precio') || msg.includes('cuánto cuesta')) {
-      return 'Para ver precios, revisa la sección de productos o dime qué modelo te interesa.';
-    }
-    return '¡Hola! ¿Sobre qué producto necesitas ayuda? Puedes preguntar por celulares, audífonos, monitores, teclados o mouse.';
-  chatbotForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
   });
 
-  chatbotForm.onsubmit = function(e) {
+  // Enviar mensaje
+  chatbotForm.addEventListener('submit', function(e) {
     e.preventDefault();
+
     const userMsg = chatbotInput.value.trim();
     if (!userMsg) return;
-    chatHistory.push({ from: 'user', text: userMsg });
-    renderChatHistory();
-    const botMsg = chatbotResponder(userMsg);
+
+    // Mostrar mensaje del usuario
+    const userDiv = document.createElement('div');
+    userDiv.style.textAlign = 'right';
+    userDiv.innerHTML = `<span style="background:#e0e0e0;padding:6px 12px;border-radius:12px;display:inline-block;margin:4px 0;">${userMsg}</span>`;
+    chatbotBody.appendChild(userDiv);
+
+    // Simular respuesta del bot
     setTimeout(() => {
-      chatHistory.push({ from: 'bot', text: botMsg });
-      renderChatHistory();
-    }, 400);
+      const botDiv = document.createElement('div');
+      botDiv.style.textAlign = 'left';
+      botDiv.innerHTML = `<span style="background:#d1e7dd;padding:6px 12px;border-radius:12px;display:inline-block;margin:4px 0;">¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte?</span>`;
+      chatbotBody.appendChild(botDiv);
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }, 500);
+
     chatbotInput.value = '';
-  };
-
-// Cerrar modal al hacer clic fuera del contenido
-document.addEventListener('DOMContentLoaded', function() {
-  const modal = document.getElementById('modalProducto');
-  if (modal) {
-    modal.addEventListener('click', function(e) {
-      // Si el clic es en el fondo (no en el contenido)
-      if (e.target === modal) {
-        cerrarModalProducto();
-      }
-    });
-  }
+    chatbotBody.scrollTop = chatbotBody.scrollHeight;
+  });
 });
-// Inicializar el chatbot
-let chatbotBienvenidaMostrada = false;
-chatbotHeader.addEventListener('click', function() {
-  if (!chatbotBienvenidaMostrada && chatbotBody.style.display === 'block') {
-    setTimeout(() => {
-      agregarMensajeBot("¡Hola! Soy el asistente virtual de TechStore+. ¿En qué puedo ayudarte?");
-    }, 300);
-    chatbotBienvenidaMostrada = true;
-  }
-});
-
-// --- Fin chatbot completo ---
 
